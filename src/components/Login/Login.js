@@ -1,24 +1,34 @@
 import React, { useContext, useState } from 'react'
-import UserPool from '../../UserPool';
-import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import { AccountContext } from '../ContextApi/Account';
 import { Box, Button, Container, CssBaseline, FormControlLabel, Grid, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
   const defaultTheme = createTheme();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const {authenticate} = useContext(AccountContext)
+    const {BaseApi, setStatus} = useContext(AccountContext)
+    const navigate = useNavigate('')
+    const [error, setError] = useState(false)
     const onSubmit = (e) => {
       e.preventDefault();
-      console.log(email, password);
-      authenticate(email, password).then((data)=>{
-        console.log('logged in', data)
-      }).catch((err)=>{
-        console.error(err)
-      })
-     
+      if(email!=='' && password!==''){
+        axios.get(`${BaseApi}/users`).then((res)=>{
+          if(res.data.length>0){
+            res.data.map((re)=>{
+              if(re?.email == email && re.password==password){
+                setStatus(true)
+                localStorage.setItem('loginStatus', true)
+                navigate('/')
+              }
+            })
+          }
+        })
+      } else {
+        setError(true)
+      }
+      // navigate('/')
     };
   
     return (
@@ -44,12 +54,13 @@ const Login = () => {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
+              // autoComplete="email"
               autoFocus
               value={email}
               onChange={(e)=>{
                 setEmail(e.target.value)
               }}
+              error={error&&email===''}
             />
             <TextField
               margin="normal"
@@ -63,7 +74,9 @@ const Login = () => {
               onChange={(e)=>{
                 setPassword(e.target.value)
               }}
-              autoComplete="current-password"
+              error={error&&password===''}
+
+              // autoComplete="current-password"
             />
             <Button
               type="submit"

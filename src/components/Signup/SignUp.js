@@ -16,12 +16,35 @@ const SignUp = () => {
   const {BaseApi} = useContext(AccountContext)
 
   const [error, setError] = useState(false)
-  const onSubmit = (e) => {
+
+  const onSubmit = async (e) => {
     e.preventDefault();
+    
     if(email!=='' && password!=='' && name !==''){
+
+      let existingUser = 0
+      await axios.get(`${BaseApi}/users`).then((res)=>{
+        if(res.data.length>0){
+          res.data.map((re)=>{
+            if(re?.email === email || re.name===name){
+              existingUser+=1
+            }
+          })
+        }
+      })
+     //  checking user already present in the db
+     if(existingUser===0){
       axios.post(`${BaseApi}/users`, {email: email, password: password, name: name}).then(()=>{
+        document.getElementsByClassName('error')[0].textContent = ''
         navigate('/login')
       })
+     } else {
+      document.getElementsByClassName('error')[0].textContent = 'Email/Name already exists'
+      setTimeout(()=>{
+        document.getElementsByClassName('error')[0].textContent = ''
+
+      }, 2000)
+     }
     } else { 
       setError(true)
     }
@@ -41,6 +64,7 @@ const SignUp = () => {
         <Typography component="h1" variant="h5">
           Sign Up
         </Typography>
+        <Typography className='error' style={{color: 'red'}}></Typography>
         <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"

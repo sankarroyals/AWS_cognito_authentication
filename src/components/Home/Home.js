@@ -8,7 +8,7 @@ const Home = () => {
   const {status} = useContext(AccountContext)
   return (
     <div>
-        {(status =='' ||  status==true)?<div><DataTable /></div>:
+        {(status==true)?<div><DataTable /></div>:
         <Navigate to={'/login'} />
         }
     </div>

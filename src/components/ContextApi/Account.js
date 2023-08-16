@@ -5,12 +5,12 @@ const AccountContext = createContext()
 
 const Account = (props) => {
 
-    const BaseApi = 'http://localhost:3004'
+    const BaseApi = 'http://localhost:3001'
     
     const navigate = useNavigate();
 
     const [status, setStatus] = useState(false);
-    
+
     useEffect(()=>{
         if(localStorage.getItem('loginStatus')){
           setStatus(true)

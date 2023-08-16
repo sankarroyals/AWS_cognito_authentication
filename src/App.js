@@ -1,24 +1,31 @@
 import logo from './logo.svg';
 import './App.css';
+import SignUp from './components/Signup/SignUp';
+import Login from './components/Login/Login';
+import { Account, AccountContext } from './components/ContextApi/Account';
+import Navbar from './components/Navbar/Navbar';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Home from './components/Home/Home';
+import { useContext, useState } from 'react';
+import NoPage from './components/NoPage';
 
 function App() {
+  const [status, setStatus] = useState(true);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    
+    <BrowserRouter>
+    <Account>
+      <Navbar />
+        <Routes>
+          <Route path='/' element={<Home />} />
+
+          {status?<Route path='/' element={<Home />} />:<Route path='/signup' element={<SignUp />} />}
+          {status?<Route path='/' element={<Home />} />:<Route path='/login' element={<Login />} />}
+          <Route path='*' element={<NoPage />} />
+        </Routes>
+     
+    </Account>
+    </BrowserRouter>
   );
 }
 

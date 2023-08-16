@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import UserPool from "../../UserPool";
 import { Box, Button, Container, CssBaseline, FormControlLabel, Grid, TextField, ThemeProvider, Typography, createTheme } from '@mui/material';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const SignUp = () => {
@@ -9,6 +9,7 @@ const SignUp = () => {
   const defaultTheme = createTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   const onSubmit = (e) => {
     e.preventDefault();
     UserPool.signUp(email, password, [], null, (err, data) => {
@@ -16,6 +17,7 @@ const SignUp = () => {
         console.error(err);
       }
       console.log(data);
+      navigate('/')
     });
   };
   return (

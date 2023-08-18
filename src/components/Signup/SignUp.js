@@ -5,47 +5,38 @@ import { AccountContext } from "../ContextApi/Account";
 import axios from "axios";
 
 const SignUp = () => {
-  
-  const defaultTheme = createTheme();
-  const [email, setEmail] = useState("");
-  
-  const [name, setname] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-
+  // Api variable
   const {BaseApi} = useContext(AccountContext)
 
+  // Used for navigating pages
+  const navigate = useNavigate();
+
+  const defaultTheme = createTheme();
+
+  // Variable to store
+  const [email, setEmail] = useState("");
+  const [name, setname] = useState("");
+  const [password, setPassword] = useState("");
+  const [number, setNumber] = useState("");
+
+  // decides error messages
   const [error, setError] = useState(false)
 
+  // calling backend api
   const onSubmit = async (e) => {
     e.preventDefault();
-    
-    if(email!=='' && password!=='' && name !==''){
-
-      let existingUser = 0
-      await axios.get(`${BaseApi}/users`).then((res)=>{
-        if(res.data.length>0){
-          res.data.map((re)=>{
-            if(re?.email === email || re.name===name){
-              existingUser+=1
-            }
+    if(email!=='' && password!=='' && name !=='' && number!==''){
+        axios.post(`${BaseApi}/signup`, {'name': name, 'email': email, 'password': password, 'mobile': number}).then((res)=>{
+            console.log(res)
+            navigate('/login')
+        }).catch((err)=>{
+            document.getElementsByClassName('error')[0].textContent = 'Internal server error Occured'
+            setTimeout(()=>{
+              document.getElementsByClassName('error')[0].textContent = ''
+            }, 3000)
           })
-        }
-      })
-     //  checking user already present in the db
-     if(existingUser===0){
-      axios.post(`${BaseApi}/users`, {email: email, password: password, name: name}).then(()=>{
-        document.getElementsByClassName('error')[0].textContent = ''
-        navigate('/login')
-      })
-     } else {
-      document.getElementsByClassName('error')[0].textContent = 'Email/Name already exists'
-      setTimeout(()=>{
-        document.getElementsByClassName('error')[0].textContent = ''
-
-      }, 2000)
-     }
-    } else { 
+    }
+    else{
       setError(true)
     }
   };
@@ -73,7 +64,7 @@ const SignUp = () => {
             id="email"
             label="Email Address"
             name="email"
-            autoComplete="email"
+            autoComplete="off"
             autoFocus
             value={email}
             onChange={(e)=>{
@@ -88,7 +79,7 @@ const SignUp = () => {
             id="name"
             label="Name"
             name="name"
-            autoComplete="name"
+            autoComplete="off"
             value={name}
             onChange={(e)=>{
               setname(e.target.value)
@@ -99,6 +90,22 @@ const SignUp = () => {
             margin="normal"
             required
             fullWidth
+            id="number"
+            label="Number"
+            name="number"
+            autoComplete= 'off'
+            value={number}
+            onChange={(e)=>{
+              setNumber(e.target.value)
+            }}
+            error = {error && number===''}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            
+            autoComplete= 'off'
             name="password"
             label="Password"
             type="password"
@@ -107,7 +114,6 @@ const SignUp = () => {
             onChange={(e)=>{
               setPassword(e.target.value)
             }}
-            autoComplete="current-password"
             error = {error && password===''}
           />
           <Button

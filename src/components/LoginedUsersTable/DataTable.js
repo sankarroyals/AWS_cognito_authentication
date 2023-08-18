@@ -35,7 +35,7 @@ export default function DataTable() {
 const {BaseApi} = useContext(AccountContext)
 const [rows, setRows] = useState([])
 useEffect(() => {
-  axios.get(`${BaseApi}/users`).then((res)=>{
+  axios.get(`${BaseApi}/getting_all_users`).then((res)=>{
     setRows(res.data)
   })
 
@@ -46,6 +46,8 @@ useEffect(() => {
         <TableHead>
           <TableRow>
             <StyledTableCell>Email</StyledTableCell>
+            
+            <StyledTableCell align="right">Mobile</StyledTableCell>
             <StyledTableCell align="right">Name</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -55,6 +57,8 @@ useEffect(() => {
               <StyledTableCell  align="left">
                 {row.email}
               </StyledTableCell>
+              <StyledTableCell align="right">{row.mobile}</StyledTableCell>
+
               <StyledTableCell align="right">{row.name}</StyledTableCell>
             </StyledTableRow>
           ))}

@@ -5,7 +5,7 @@ const AccountContext = createContext()
 
 const Account = (props) => {
 
-    const BaseApi = 'http://localhost:3001'
+    const BaseApi = 'http://localhost:8000/api'
     
     const navigate = useNavigate();
 

@@ -4,6 +4,8 @@ import { Box, Button, Container, CssBaseline, FormControlLabel, Grid, TextField,
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import jwtDecode from 'jwt-decode'
+
 const Login = () => {
   const defaultTheme = createTheme();
     const [email, setEmail] = useState("");
@@ -14,21 +16,21 @@ const Login = () => {
     const onSubmit = (e) => {
       e.preventDefault();
       if(email!=='' && password!==''){
-        axios.get(`${BaseApi}/users`).then((res)=>{
-          if(res.data.length>0){
-            res.data.map((re)=>{
-              if(re?.email == email && re.password==password){
-                setStatus(true)
-                localStorage.setItem('loginStatus', true)
-                navigate('/')
-              }
-            })
-          }
+        axios.post(`${BaseApi}/token/`, {'email': email, 'password': password}).then((res)=>{
+          console.log(res.data)
+          localStorage.setItem('loginStatus', res.data.refresh)
+          setStatus(true)
+          navigate('/')
+        }).catch((err)=>{
+          console.log(err)
+          document.getElementsByClassName('error')[0].textContent = err.response.data.detail
+            setTimeout(()=>{
+              document.getElementsByClassName('error')[0].textContent = ''
+            }, 3000)
         })
       } else {
         setError(true)
       }
-      // navigate('/')
     };
   
     return (
@@ -46,6 +48,7 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Log In
           </Typography>
+          <Typography className='error' style={{color: 'red'}}></Typography>
           <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
